@@ -3,7 +3,7 @@
 - [Common Core Modules](#Common-Core-Modules)
 - [Custom Node Modules](#Custom-Node-Modules)
 - [File System Common Core Module](#File-System-Common-Core-Module)
-- [Promises, Async / Await](#Promises,-Async-/-Await)
+- [Promises, Async / Await](#Promises)
 
 ---
 
@@ -220,7 +220,7 @@ fs.appendFile(
 );
 ```
 
-### Promises, Async / Await
+### Promises
 
 The below example shows how we can control the thread by using promises.
 
