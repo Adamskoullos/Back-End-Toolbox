@@ -1,5 +1,12 @@
 # Basics
 
+- [Common Core Modules](#Common-Core-Modules)
+- [Custom Node Modules](#Custom-Node-Modules)
+- [File System Common Core Module](#File-System-Common-Core-Module)
+- [Promises, Async / Await](#Promises,-Async-/-Await)
+
+---
+
 ## Common Core Modules
 
 ```js
@@ -156,71 +163,12 @@ console.log(fs);
   R_OK: 4,
   W_OK: 2,
   X_OK: 1,
-  constants: [Object: null prototype] {
-    UV_FS_SYMLINK_DIR: 1,
-    UV_FS_SYMLINK_JUNCTION: 2,
-    O_RDONLY: 0,
-    O_WRONLY: 1,
-    O_RDWR: 2,
-    UV_DIRENT_UNKNOWN: 0,
-    UV_DIRENT_FILE: 1,
-    UV_DIRENT_DIR: 2,
-    UV_DIRENT_LINK: 3,
-    UV_DIRENT_FIFO: 4,
-    UV_DIRENT_SOCKET: 5,
-    UV_DIRENT_CHAR: 6,
-    UV_DIRENT_BLOCK: 7,
-    S_IFMT: 61440,
-    S_IFREG: 32768,
-    S_IFDIR: 16384,
-    S_IFCHR: 8192,
-    S_IFBLK: 24576,
-    S_IFIFO: 4096,
-    S_IFLNK: 40960,
-    S_IFSOCK: 49152,
-    O_CREAT: 64,
-    O_EXCL: 128,
-    UV_FS_O_FILEMAP: 0,
-    O_NOCTTY: 256,
-    O_TRUNC: 512,
-    O_APPEND: 1024,
-    O_DIRECTORY: 65536,
-    O_NOATIME: 262144,
-    O_NOFOLLOW: 131072,
-    O_SYNC: 1052672,
-    O_DSYNC: 4096,
-    O_DIRECT: 16384,
-    O_NONBLOCK: 2048,
-    S_IRWXU: 448,
-    S_IRUSR: 256,
-    S_IWUSR: 128,
-    S_IXUSR: 64,
-    S_IRWXG: 56,
-    S_IRGRP: 32,
-    S_IWGRP: 16,
-    S_IXGRP: 8,
-    S_IRWXO: 7,
-    S_IROTH: 4,
-    S_IWOTH: 2,
-    S_IXOTH: 1,
-    F_OK: 0,
-    R_OK: 4,
-    W_OK: 2,
-    X_OK: 1,
-    UV_FS_COPYFILE_EXCL: 1,
-    COPYFILE_EXCL: 1,
-    UV_FS_COPYFILE_FICLONE: 2,
-    COPYFILE_FICLONE: 2,
-    UV_FS_COPYFILE_FICLONE_FORCE: 4,
-    COPYFILE_FICLONE_FORCE: 4
-  },
-  promises: [Getter]
 }
 
 
 ```
 
-### Read and Write file
+### Read, Write Update file
 
 **Read**:
 
@@ -242,13 +190,13 @@ fs.readFile(path.join(__dirname, "files", "short.txt"), "utf8", (err, data) => {
 
 **Write**:
 
-1. path
+1. path with `new` file name
 2. data to be written
 3. Callback
 
 ```js
 fs.writeFile(
-  path.join(__dirname, "files", "short.txt"),
+  path.join(__dirname, "files", "new.txt"),
   "This is the data to be written",
   (err) => {
     if (err) throw err;
@@ -256,3 +204,103 @@ fs.writeFile(
   }
 );
 ```
+
+**Update**:
+
+`appendFile` can create a new file if it does not already exist or append to an existing file. The below example appends some text to the existing `new.txt` file:
+
+```js
+fs.appendFile(
+  path.join(__dirname, "files", "new.txt"),
+  "\n\nThis is the updated text added to the new file",
+  (err) => {
+    if (err) throw err;
+    console.log("Update: ", "Update complete");
+  }
+);
+```
+
+### Promises, Async / Await
+
+The below example shows how we can control the thread by using promises.
+
+1. create a `fsPromises`
+2. Create a wrapper `async` function
+3. Use `try/catch` blocks
+4. Then undertake operations using `await`
+
+Below we are reading a file, taking the data and creating a new file, then updating the new file data and then finally renaming the new file:
+
+```js
+const fsPromises = require("fs").promises;
+const path = require("path");
+const fileOps = async () => {
+  try {
+    const data = await fsPromises.readFile(
+      path.join(__dirname, "files", "short.txt"),
+      "utf-8"
+    );
+    console.log("Data: ", data);
+    await fsPromises.writeFile(path.join(__dirname, "files", "new.txt"), data);
+    await fsPromises.appendFile(
+      path.join(__dirname, "files", "new.txt"),
+      ". Here is an update to the new file..."
+    );
+    await fsPromises.rename(
+      path.join(__dirname, "files", "new.txt"),
+      path.join(__dirname, "files", "newRenamed.txt")
+    );
+    const newData = await fsPromises.readFile(
+      path.join(__dirname, "files", "newRenamed.txt"),
+      "utf-8"
+    );
+    console.log("newData: ", newData);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+fileOps();
+```
+
+### Streams
+
+When reading and writing large files we can use streams to break the data up into bite size chunks for processing:
+
+```js
+const fs = require("fs");
+const path = require("path");
+
+const rs = fs.createReadStream(path.join(__dirname, "files", "long.txt"), {
+  encoding: "utf8",
+});
+
+const ws = fs.createWriteStream(path.join(__dirname, "files", "new-long.txt"));
+
+// 1
+
+// rs.on("data", (dataChunk) => {
+//   ws.write(dataChunk);
+// });
+
+// 2
+
+rs.pipe(ws);
+```
+
+### Directories
+
+The below example shows how to check if a directory already exists and if not create it:
+
+```js
+const fs = require("fs");
+
+if (!fs.existsSync("./new")) {
+  fs.mkdir("new", (err) => {
+    if (err) throw err;
+    console.log("Directory created");
+  });
+}
+```
+
+> `rmdir` can be used to remove and existing directory
