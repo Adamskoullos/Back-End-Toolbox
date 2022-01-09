@@ -26,10 +26,10 @@ npm i nodemon -D
 **package.json**:
 
 ```js
-"scripts": {
-    "run": "node index",
+ "scripts": {
+    "start": "node index",
     "dev": "nodemon index"
-},
+  },
 ``
 ```
 
@@ -66,6 +66,12 @@ aaac7c74-7386-4afd-b005-244402e89a01
 
 ```
 npm rm packageName
+```
+
+If the package is a dev dependency we need to add the `-D` flag:
+
+```
+npm rm packageName -D
 ```
 
 ## Install specific version

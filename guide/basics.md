@@ -209,6 +209,12 @@ fs.writeFile(
 
 `appendFile` can create a new file if it does not already exist or append to an existing file. The below example appends some text to the existing `new.txt` file:
 
+Arguments:
+
+1. File path
+2. data to be added to the file
+3. Callback > optional
+
 ```js
 fs.appendFile(
   path.join(__dirname, "files", "new.txt"),

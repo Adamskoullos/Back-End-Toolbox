@@ -4,7 +4,7 @@
   "description": "Add `nodemon` globally to run files on save:",
   "main": "index.js",
   "scripts": {
-    "run": "node index",
+    "start": "node index",
     "dev": "nodemon index"
   },
   "repository": {
