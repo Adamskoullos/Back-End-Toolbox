@@ -1,4 +1,4 @@
-# node-toolbox
+# Node-Toolbox
 
 - [File System & Promises](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/basics.md)
 - [NPM Modules](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/npm-modules.md)
