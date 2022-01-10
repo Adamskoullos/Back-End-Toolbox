@@ -1,2 +1,0 @@
-20220109	07:03:42	54b5ac60-e3ec-4b1b-83bd-c89d4b76572e	Event log message!!!!
-20220109	07:03:56	538211cb-f6ae-4b02-910c-a56f912edc77	Event log message!!!!
