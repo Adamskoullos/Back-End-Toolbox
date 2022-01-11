@@ -123,3 +123,34 @@ const server = http.createServer((req, res) => {
 // Initialise server
 server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 ```
+
+This is `logEvents.js`, passing in the filename (which includes the file extension) allows the function to be used for multiple types of logs. The example uses both request and error logs each with their own file:
+
+```js
+const { format } = require("date-fns");
+const { v4: uuid } = require("uuid");
+
+const fs = require("fs");
+const fsPromises = require("fs").promises;
+const path = require("path");
+
+const logEvents = async (message, fileName) => {
+  const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
+  const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
+
+  try {
+    if (!fs.existsSync("./logs")) {
+      await fsPromises.mkdir(path.join(__dirname, "logs"));
+    }
+    await fsPromises.appendFile(
+      path.join(__dirname, "logs", fileName),
+      logItem
+    );
+    console.log("Event Logged >>>>>!");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = logEvents;
+```
