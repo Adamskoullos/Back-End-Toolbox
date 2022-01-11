@@ -154,3 +154,11 @@ const logEvents = async (message, fileName) => {
 
 module.exports = logEvents;
 ```
+
+```js
+//Emit Request Event >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+myEmitter.emit("log", `${req.url}\t${req.method}`, "reqLog.txt");
+
+// Emit Error Event >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+myEmitter.emit("log", `${err.name}: ${err.message}`, "errLog.txt");
+```
