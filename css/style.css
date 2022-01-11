@@ -12,3 +12,14 @@ body {
   display: grid;
   place-content: center;
 }
+
+.image-container {
+  width: 80vw;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+}

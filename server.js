@@ -10,10 +10,14 @@ class Emitter extends EventEmitter {}
 // Initialise object
 const myEmitter = new Emitter();
 
+// Add listener for the `log` event
+myEmitter.on("log", (msg, fileName) => logEvents(msg, fileName));
+
 // Create port
 const PORT = process.env.PORT || 3500;
 
-// Used within the server function to server the file
+// Used within the server function to serve the data in the correct form.
+// We are using the `contentType` from the below switch and case to manage this.
 const serveFile = async (filePath, contentType, response) => {
   try {
     const rawData = await fsPromises.readFile(
@@ -30,6 +34,7 @@ const serveFile = async (filePath, contentType, response) => {
     );
   } catch (err) {
     console.log(err);
+    // Emit Error Event >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     myEmitter.emit("log", `${err.name}: ${err.message}`, "errLog.txt");
     response.statusCode = 500;
     response.end();
@@ -39,6 +44,7 @@ const serveFile = async (filePath, contentType, response) => {
 // Create server
 const server = http.createServer((req, res) => {
   console.log(req.url, req.method);
+  //Emit Request Event >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   myEmitter.emit("log", `${req.url}\t${req.method}`, "reqLog.txt");
 
   const extension = path.extname(req.url);
@@ -111,9 +117,3 @@ const server = http.createServer((req, res) => {
 
 // Initialise server
 server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
-
-// Add listener for the `log` event
-// Emitter.on("log", (msg) => logEvents(msg));
-
-// Emit event
-// myEmitter.emit("log", "Event log message!!!!");

@@ -1,0 +1,1 @@
+20220111	06:33:15	7dfef94b-8118-496f-93c0-a83fe1beac4e	TypeError: The value "utf9" is invalid for option "encoding"
