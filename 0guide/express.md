@@ -1,3 +1,14 @@
+# Express
+
+Install:
+
+```js
+npm i express
+```
+
+Below is a basic core model of how `server.js` is structured with Express when serving the front-end:
+
+```js
 const { application } = require("express");
 const express = require("express");
 const app = express();
@@ -58,3 +69,4 @@ app.get("/chain(.html)?", [one, two, three]);
 
 // Initialise server
 app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+```

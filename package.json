@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Adamskoullos/node-toolbox#readme",
   "dependencies": {
     "date-fns": "^2.28.0",
+    "express": "^4.17.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
