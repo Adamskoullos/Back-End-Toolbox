@@ -1,10 +1,33 @@
-const { application } = require("express");
 const express = require("express");
 const app = express();
 const path = require("path");
+const cors = require("cors");
+const { logger } = require("./middleware/logEvents");
 const PORT = process.env.PORT || 3500;
 
 // Middleware >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Custom middleware for logging
+app.use(logger);
+
+// Third party middleware - CORS - cross origin resource sharing
+// Remove dev origin domains from whitelist before shipping
+const whitelist = [
+  "https://www.google.com",
+  // "http://127.0.0.1:5500",
+  // "http://localhost:3500",
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // Built-in middleware to handle urlencoded data (form data)
 // content-type: application/x-www-form-urlencoded
@@ -13,7 +36,7 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json
 app.use(express.json());
 
-// serve static files
+// serve static files ex: /public/css/styles.css (automatically serves all files within public)
 app.use(express.static(path.join(__dirname, "/public")));
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
