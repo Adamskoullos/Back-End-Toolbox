@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const path = require("path");
+const errorHandler = require("./middleware/errorHandler");
 
 const { logger } = require("./middleware/logEvents");
 const PORT = process.env.PORT || 3500;
@@ -60,9 +61,9 @@ app.get("/old-page(.html)?", (req, res) => {
 });
 
 // Catch all
-app.get("/*", (req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
-});
+// app.get("/*", (req, res) => {
+//   res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
+// });
 
 // Route handlers
 app.get(
@@ -93,6 +94,14 @@ const three = (req, res) => {
 };
 
 app.get("/chain(.html)?", [one, two, three]);
+
+// Catch all methods and routes
+app.all("*", (req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
+});
+
+// Server Error handling
+app.use(errorHandler);
 
 // Initialise server
 app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

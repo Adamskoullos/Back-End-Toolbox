@@ -1,4 +1,4 @@
-# Middleware
+# Express Middleware
 
 Using the pattern `app.use(middleware)` at the top of the logic within the server file allows the middleware to be executed on every request:
 
@@ -59,6 +59,8 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 ## Custom Middleware
 
+The below example shows the middleware executing custom application code in this instance a `logger` function each time a request is made:
+
 ```js
 const { logger } = require("./middleware/logEvents");
 
@@ -100,6 +102,106 @@ const logger = (req, res, next) => {
 
 module.exports = { logger, logEvents };
 ```
+
+---
+
+## Third Party Middleware
+
+`CORS` is a good example of third party code that can be added to the application and run on each request.
+The below example is using a whitelist array for allowed origins and the within the `corsOption`, origin is a function.
+The if statement has an `|| !origin` which excludes server to server when there is no origin, this is helpful during development but should be removed for production!
+
+```
+npm i cors
+```
+
+```js
+const express = require("express");
+const cors = require("cors");
+const app = express();
+```
+
+```js
+const whitelist = [
+  "https://www.production-domain.com",
+  "http://127.0.0.1:5000", // dev front-end
+  "http://localhost:3500", // dev beck-end
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+```
+
+---
+
+## Error Handling Middleware
+
+At the bottom of the server, after all requests and before the listen we can add an error catch. This takes in four arguments:
+
+1. error
+2. request
+3. response
+4. next
+
+```js
+// Server Error handling
+app.use(function (err, req, res, next) {
+  console.error(err.message);
+  res.status(500).send(err.message);
+});
+
+// Initialise server
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+```
+
+This can be extracted away into its own file:
+
+```js
+// /middleware/errorHandler.js
+const { logEvents } = require("./logEvents");
+
+const errorHandler = (err, req, res, next) => {
+  logEvents(`${err.name}: ${err.message}`, "errorLog.txt");
+  res.status(500).send(err.message);
+};
+
+module.exports = errorHandler;
+```
+
+Then imported into the server:
+
+```js
+const errorHandler = require("./middleware/errorHandler");
+```
+
+And then used:
+
+```js
+// Server Error handling
+app.use(errorHandler);
+
+// Initialise server
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+```
+
+## Route Middleware
+
+```js
+// Catch all methods and routes
+app.all("*", (req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
+});
+```
+
+---
 
 ## Complete Pattern
 
