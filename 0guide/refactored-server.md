@@ -1,3 +1,4 @@
+```js
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -26,13 +27,18 @@ app.use(express.json());
 
 // serve static files ex: /public/css/styles.css (automatically serves all files within public)
 app.use("/", express.static(path.join(__dirname, "/public"))); // Any page top level
+app.use("/subdir", express.static(path.join(__dirname, "/public"))); // any page in subdir folder
 
-// Routing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Routing & Serving files >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Top level routes to serve static files (index & 404)
+// Top level routes
 app.use("/", require("./routes/root"));
 
+// Subdir routes
+app.use("/subdir", require("./routes/subdir"));
+
 // Routing for API >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 app.use("/employees", require("./routes/api/employees"));
 
 // Catch all methods and routes
@@ -45,3 +51,4 @@ app.use(errorHandler);
 
 // Initialise server
 app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+```
