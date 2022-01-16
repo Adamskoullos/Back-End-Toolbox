@@ -185,3 +185,12 @@
 20220115	11:47:42	dca9b313-cebd-4e54-a440-b6347f236df6	POST	undefined	/employees
 20220115	11:48:12	f7fe80bb-037d-4001-bb74-99375989b715	DELETE	undefined	/employees
 20220115	11:48:22	354abcb3-5dbd-416b-8869-b87e030c2918	GET	undefined	/employees
+20220116	13:24:01	f1d13ac3-26bb-4e24-a3b3-b6cca119db1a	GET	undefined	/
+20220116	13:24:01	143a23e9-2c1d-461b-993e-99c392adc5f8	GET	undefined	/css/style.css
+20220116	13:24:01	0ae9bd47-27e2-4854-8703-2047f2c0d88a	GET	undefined	/favicon.ico
+20220116	14:59:52	6da58923-a4b3-4cc6-9cbd-ee0144f08194	GET	undefined	/employees
+20220116	15:00:54	685e0ace-e349-4739-8599-7e4bb222f032	POST	undefined	/employees
+20220116	15:01:14	f4c3fd0f-a985-4e7f-9a3a-32522349c16f	POST	undefined	/employees
+20220116	15:01:32	f922ef71-837c-4f8b-a219-cf80ac68fc7d	DELETE	undefined	/employees
+20220116	15:03:31	d057bc2a-e541-4acd-992c-a36751ddb105	POST	undefined	/register/
+20220116	15:56:26	8b4a33e3-946d-4c70-a5ef-be3a9c9395ad	POST	undefined	/auth

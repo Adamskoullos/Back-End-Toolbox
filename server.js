@@ -34,6 +34,8 @@ app.use("/", require("./routes/root"));
 
 // Routing for API >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 app.use("/employees", require("./routes/api/employees"));
+app.use("/register", require("./routes/register"));
+app.use("/auth", require("./routes/auth"));
 
 // Catch all methods and routes
 app.all("*", (req, res) => {
