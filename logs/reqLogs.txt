@@ -194,3 +194,4 @@
 20220116	15:01:32	f922ef71-837c-4f8b-a219-cf80ac68fc7d	DELETE	undefined	/employees
 20220116	15:03:31	d057bc2a-e541-4acd-992c-a36751ddb105	POST	undefined	/register/
 20220116	15:56:26	8b4a33e3-946d-4c70-a5ef-be3a9c9395ad	POST	undefined	/auth
+20220117	07:59:56	591ff1f4-624a-47b4-8ff6-26f06a301fe2	POST	undefined	/auth
