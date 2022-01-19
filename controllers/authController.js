@@ -52,6 +52,8 @@ const handleLogin = async (req, res) => {
   );
   // Send refresh token to front-end, must be http cookie only and not stored in local storage
   res.cookie("jwt", refreshToken, {
+    sameSite: "None",
+    secure: true,
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
   }); // 1 day

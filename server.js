@@ -7,6 +7,7 @@ const corsOptions = require("./config/corsOptions");
 const { logger } = require("./middleware/logEvents");
 const verifyJWT = require("./middleware/verifyJWT");
 const cookieParser = require("cookie-parser");
+const credentials = require("./middleware/credentials");
 
 const PORT = process.env.PORT || 3500;
 
@@ -14,6 +15,9 @@ const PORT = process.env.PORT || 3500;
 
 // Custom middleware for logging
 app.use(logger);
+
+// Handle options credentials check before cors and fetch cookies credentials requirement
+app.use(credentials);
 
 // Third party middleware - CORS - cross origin resource sharing
 // Remove dev origin domains from whitelist before shipping
@@ -40,6 +44,7 @@ app.use("/", require("./routes/root"));
 // Routing for headless backend >>>>>>>>>>>>>>>>>>
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
+app.use("/logout", require("./routes/logout"));
 
 // Check jwt refresh token and re-issue access token
 app.use("/refresh", require("./routes/refresh"));
