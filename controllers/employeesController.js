@@ -23,7 +23,6 @@ const postNewEmployee = (req, res) => {
     lastname: req.body.lastname,
   };
   data.setEmployees([...data.employees, newEmployee]);
-  console.log("Employees: ", data.employees);
   res.status(201).json(data.employees);
 };
 

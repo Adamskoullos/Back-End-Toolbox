@@ -129,3 +129,86 @@ const handleRefreshToken = (req, res) => {
 
 module.exports = { handleRefreshToken };
 ```
+
+Then handle middleware to verify the roles:
+
+1. Update `/middleware/verifyJWT.js`:
+
+The `accessToken` now has a `UserInfo` object which contains both the username and the user roles. So we need to grab and assign then to the `req` from the `decodedUser`.
+
+```js
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  // if there is no auth header or if the auth header does not start with Bearer just return
+  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401); // Unauthorised
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedUser) => {
+    if (err) return res.sendStatus(403); // Invalid token
+    req.user = decodedUser.UserInfo.username;
+    req.roles = decodedUser.UserInfo.roles;
+    next();
+  });
+};
+
+module.exports = verifyJWT;
+```
+
+2. Create verify roles middleware `/middleware/verifyRoles.js`:
+
+```js
+const verifyRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req?.roles) return res.sendStatus(401); // unauthorized
+    const rolesArray = [...allowedRoles];
+    console.log("RoleArr: ", rolesArray);
+    console.log("req.roles: ", req.roles);
+    // create array of roles the user has, then find the first role that is true and assign true as the value of `result`
+    const result = req.roles
+      .map((role) => rolesArray.includes(role))
+      .find((val) => val === true);
+    if (!result) return res.sendStatus(401); // the user does not have role authorization
+    next();
+  };
+};
+
+module.exports = verifyRoles;
+```
+
+3. Implement the middleware to verify routes. The example below uses the middleware to guard specific routes within the employees api:
+
+The below example is structured to do the following:
+
+- `GET` > Not restricted to any roles, but the whole employees route protected the credentials middleware so only logged in uses can get employees list
+- `POST` and `PUT` > `Admin` and `Editor` roles can add and update employees
+- `DELETE` > `Admin` role only can delete employees
+
+`/routes/api/employees.js`:
+
+```js
+const express = require("express");
+const router = express.Router();
+const ROLES_LIST = require("../../config/roles");
+const verifyRoles = require("../../middleware/verifyRoles");
+
+const {
+  getAllEmployees,
+  postNewEmployee,
+  updateEmployee,
+  deleteEmployee,
+  getEmployee,
+} = require("../../controllers/employeesController");
+
+router
+  .route("/")
+  .get(getAllEmployees)
+  .post(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor), postNewEmployee)
+  .put(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor), updateEmployee)
+  .delete(verifyRoles(ROLES_LIST.Admin), deleteEmployee);
+
+router.route("/:id").get(getEmployee);
+
+module.exports = router;
+```

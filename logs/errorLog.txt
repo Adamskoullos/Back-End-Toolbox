@@ -1,3 +1,22 @@
 20220114	06:38:04	3d63785d-c619-426f-a6d4-f63e2fd7c056	Error: Not allowed by CORS
 20220115	09:17:35	6022046f-4b0e-449b-9f24-c3df6e8a5e60	ReferenceError: Cannot access 'data' before initialization
 20220115	09:17:40	e95298f8-73ab-42a4-945e-fbcfd0d54ee3	ReferenceError: Cannot access 'data' before initialization
+20220121	05:54:20	a9268805-fbb1-463d-8754-0488289dc9d3	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:55:21	3b26848e-2bb3-44be-8c95-cd3dfe9b3fb5	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:55:28	20006fe6-e9a3-427d-970f-f28d16398b0b	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:57:00	5df6899b-ddb7-4b91-928e-2d15026916f4	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:57:45	661458ac-8756-4261-91c5-8b1bc6c2f897	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:57:46	97b12f7a-65b6-4b0a-bc66-a9f3fbc1751c	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:57:46	cf6f7cf2-abd8-4bef-a6c5-9c65d09cbd51	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:01	aeae901d-ccfe-4b8d-949f-41d9eda4265b	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:02	6f524d7e-795c-4a22-8b1f-6c6164a768ca	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:02	50739a38-1dc3-40dd-9c3a-e2c6a4319242	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:03	bc4f6d21-3981-4a3f-96d2-50bf5f597944	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:03	4787cbc7-f351-435f-87c1-84f60a9391d7	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:03	d65c8368-b89f-4025-8baf-ff38a3e12313	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:03	2b5b02f5-d6e3-4445-bd40-ccea98460822	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:58:03	aa4c6862-ca14-4ccd-8841-c7f5b2f1d38c	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:59:44	ecf6ddfe-173f-46ec-a9f0-d1071e902b43	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:59:45	0e59a2a1-3cdb-4b4b-b443-e48d1a6aa9aa	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:59:46	a12af598-bd6a-494f-a49f-a2f746a261e7	ReferenceError: Cannot access 'authHeader' before initialization
+20220121	05:59:47	2497e6b1-45ec-4e74-8745-0ae851e15784	ReferenceError: Cannot access 'authHeader' before initialization
