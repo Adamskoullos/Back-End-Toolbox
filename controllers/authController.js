@@ -8,7 +8,6 @@ const userDB = {
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const fsPromises = require("fs").promises; // Only used while we are using a file as a proxy db
 const path = require("path");
 

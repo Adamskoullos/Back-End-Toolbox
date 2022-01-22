@@ -327,3 +327,5 @@
 20220121	06:34:57	8b05b726-b397-43f0-860c-980974caa76a	POST	undefined	/auth
 20220121	06:35:19	50864301-9b73-40c4-9622-f6473e342ebc	DELETE	undefined	/employees
 20220121	06:35:35	5302ce73-fc1b-46f3-a00f-21cced33d414	GET	undefined	/employees
+20220122	10:59:14	7f26dfca-990e-4823-ab48-22f39658fbe8	POST	undefined	/register
+20220122	11:07:18	5cd2c378-7620-4a1b-a36b-1b6877b6df17	POST	undefined	/register/
