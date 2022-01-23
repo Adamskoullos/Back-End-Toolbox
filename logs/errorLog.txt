@@ -20,3 +20,4 @@
 20220121	05:59:45	0e59a2a1-3cdb-4b4b-b443-e48d1a6aa9aa	ReferenceError: Cannot access 'authHeader' before initialization
 20220121	05:59:46	a12af598-bd6a-494f-a49f-a2f746a261e7	ReferenceError: Cannot access 'authHeader' before initialization
 20220121	05:59:47	2497e6b1-45ec-4e74-8745-0ae851e15784	ReferenceError: Cannot access 'authHeader' before initialization
+20220123	08:20:26	d82ffa4e-b064-4a4d-8780-cf2c3c12940d	SyntaxError: Unexpected token / in JSON at position 0

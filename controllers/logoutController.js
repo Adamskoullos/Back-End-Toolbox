@@ -1,11 +1,4 @@
-const usersDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-const fsPromises = require("fs").promises;
-const path = require("path");
+const User = require("../model/User");
 
 const handleLogout = async (req, res) => {
   // On client also delete the access token
@@ -13,9 +6,7 @@ const handleLogout = async (req, res) => {
   if (!cookies?.jwt) return res.sendStatus(204); // No content to send back
   const refreshToken = cookies.jwt;
   // Is refresh token in DB
-  const foundUser = usersDB.users.find(
-    (person) => person.refreshToken === refreshToken
-  );
+  const foundUser = await User.findOne({ refreshToken }).exec();
   if (!foundUser) {
     // At this point we have a cookie but no user so we just clear the cookie
     res.clearCookie("jwt", {
@@ -25,18 +16,10 @@ const handleLogout = async (req, res) => {
     });
     return res.sendStatus(204);
   }
-  // At this point we have a user that has a matching refresh token that needs to be logged out
-  const otherUsers = usersDB.users.filter(
-    (person) => person.refreshToken !== foundUser.refreshToken
-  );
-  // remove cookie from user
-  const currentUser = { ...foundUser, refreshToken: "" };
-  // Add user back and update the db
-  usersDB.setUsers([...otherUsers, currentUser]);
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "model", "users.json"),
-    JSON.stringify(usersDB.users)
-  );
+  // Delete refresh token from user and update in the db
+  foundUser.refreshToken = "";
+  const result = await foundUser.save();
+  console.log("Logged out user: ", result);
   // Clear the cookie
   res.clearCookie("jwt", {
     sameSite: "None",

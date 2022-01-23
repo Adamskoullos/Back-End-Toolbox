@@ -329,3 +329,16 @@
 20220121	06:35:35	5302ce73-fc1b-46f3-a00f-21cced33d414	GET	undefined	/employees
 20220122	10:59:14	7f26dfca-990e-4823-ab48-22f39658fbe8	POST	undefined	/register
 20220122	11:07:18	5cd2c378-7620-4a1b-a36b-1b6877b6df17	POST	undefined	/register/
+20220123	08:18:42	dd02dac9-ff75-421f-a296-a0cb6ecaf10f	POST	undefined	/register/
+20220123	08:20:26	90190f5c-2950-44d3-bd29-9f914f3fde89	POST	undefined	/auth
+20220123	08:20:39	25f36a20-a99c-4225-b097-1a9f17611789	POST	undefined	/auth
+20220123	08:20:59	b7f02941-34fd-415a-a9b3-39922b25813c	GET	undefined	/employees
+20220123	08:21:37	f1cca3e9-1c96-408d-8bba-3457da5c1745	GET	undefined	/logout
+20220123	08:24:44	b60d8dd3-3578-4a7d-b635-b6ee035f6b53	GET	undefined	/logout
+20220123	08:25:41	7657a702-33c4-4cb3-8d5c-8a15c55f1f95	POST	undefined	/auth
+20220123	08:26:06	d9b47a07-e484-43c8-b969-7b15b9be2c96	GET	undefined	/refresh
+20220123	08:26:53	4512b649-5264-415a-b5b6-a062e128f97a	POST	undefined	/auth
+20220123	08:26:59	18c448d3-1d1a-415f-a71a-82e3a176ffe2	GET	undefined	/refresh
+20220123	08:27:15	d3c520c3-a060-4a6c-a477-02f3ec7e061c	GET	undefined	/refresh
+20220123	08:30:12	5074cadb-634c-45f3-b638-947bed5966d1	GET	undefined	/refresh
+20220123	08:30:27	c1c5a3dd-3364-423d-ae42-030a3125aa6c	GET	undefined	/logout

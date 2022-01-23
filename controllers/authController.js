@@ -1,15 +1,6 @@
-const userDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-
+const User = require("../model/User");
 const bcrypt = require("bcrypt");
-
 const jwt = require("jsonwebtoken");
-const fsPromises = require("fs").promises; // Only used while we are using a file as a proxy db
-const path = require("path");
 
 const handleLogin = async (req, res) => {
   const { user, pwd } = req.body;
@@ -19,7 +10,7 @@ const handleLogin = async (req, res) => {
       .json({ message: "Username and Password are required." });
   }
   // See if user exists
-  const foundUser = userDB.users.find((person) => person.username === user);
+  const foundUser = await User.findOne({ username: user }).exec();
   if (!foundUser) return res.sendStatus(401); // Unauthorised
   // Check password
   const match = await bcrypt.compare(pwd, foundUser.password);
@@ -44,22 +35,14 @@ const handleLogin = async (req, res) => {
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
-  // Save refresh token within the DB
-  const otherUsers = userDB.users.filter(
-    (person) => person.username !== foundUser.username
-  );
-  const currentUser = { ...foundUser, refreshToken };
-  // Update users array
-  userDB.setUsers([...otherUsers, currentUser]);
-  // Write to file
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "model", "users.json"),
-    JSON.stringify(userDB.users)
-  );
+  // Update the user to include the refreshToken and save updated user within the DB
+  foundUser.refreshToken = refreshToken;
+  const result = await foundUser.save();
+  console.log("Logged in user: ", result);
   // Send refresh token to front-end, must be http cookie only and not stored in local storage
   res.cookie("jwt", refreshToken, {
     sameSite: "None",
-    secure: true,
+    // secure: true,
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
   }); // 1 day
