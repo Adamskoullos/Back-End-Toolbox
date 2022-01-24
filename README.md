@@ -4,7 +4,7 @@
 - [NPM Modules](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/npm-modules.md)
 - [Event Emitter](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/event-emitter.md)
 - [Web Server](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/web-server.md)
-- [Middleware]()
+- [Middleware](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/middleware.md#Route-Middleware)
 - [MVC]()
 - [Authentication]()
 - [User Roles]()
