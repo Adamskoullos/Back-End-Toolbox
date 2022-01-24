@@ -1,3 +1,13 @@
+# Authentication
+
+- [Auth Set Up and Login](#Auth-Set-Up)
+- [Refresh Tokens](#Refresh-Tokens)
+- [Logout](#Logout-workflow)
+
+---
+
+# Auth Set Up
+
 ```
 npm i dotenv jsonwebtoken cookie-parser
 ```
@@ -28,28 +38,13 @@ node_modules
 .env
 ```
 
-Now this is in place we can add auth tokens to the application:
+Now this is in place we can add auth tokens to the application and handle the login logic:
 
 ```js
-/// authController
-const userDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-
+const User = require("../model/User");
 const bcrypt = require("bcrypt");
-
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const fsPromises = require("fs").promises; // Only used while we are using a file as a proxy db
-const path = require("path");
-```
 
-Then within the logic as the user is to be logged in:
-
-```js
 const handleLogin = async (req, res) => {
   const { user, pwd } = req.body;
   if (!user || !pwd) {
@@ -58,15 +53,22 @@ const handleLogin = async (req, res) => {
       .json({ message: "Username and Password are required." });
   }
   // See if user exists
-  const foundUser = userDB.users.find((person) => person.username === user);
+  const foundUser = await User.findOne({ username: user }).exec();
   if (!foundUser) return res.sendStatus(401); // Unauthorised
   // Check password
   const match = await bcrypt.compare(pwd, foundUser.password);
   if (!match) return res.sendStatus(401);
+  // Grab the roles for the foundUser
+  const roles = Object.values(foundUser.roles);
   // Create JWTs >>>>>>>>>>>>>>>>>>>>>>>>>
   // Access token
   const accessToken = jwt.sign(
-    { username: foundUser.username },
+    {
+      UserInfo: {
+        username: foundUser.username,
+        roles: roles,
+      },
+    },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "100s" }
   );
@@ -76,22 +78,14 @@ const handleLogin = async (req, res) => {
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
-  // Save refresh token within the DB
-  const otherUsers = userDB.users.filter(
-    (person) => person.username !== foundUser.username
-  );
-  const currentUser = { ...foundUser, refreshToken };
-  // Update users array
-  userDB.setUsers([...otherUsers, currentUser]);
-  // Write to file
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "model", "users.json"),
-    JSON.stringify(userDB.users)
-  );
+  // Update the user to include the refreshToken and save updated user within the DB
+  foundUser.refreshToken = refreshToken;
+  const result = await foundUser.save();
+  console.log("Logged in user: ", result);
   // Send refresh token to front-end, must be http cookie only and not stored in local storage
   res.cookie("jwt", refreshToken, {
     sameSite: "None",
-    secure: true,
+    // secure: true,
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
   }); // 1 day
@@ -106,7 +100,6 @@ Now on to the middleware to create a `verifyJWT.js` file:
 
 ```js
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
@@ -124,32 +117,14 @@ const verifyJWT = (req, res, next) => {
 module.exports = verifyJWT;
 ```
 
-Now we have the middleware, we can use it within any route we want to guard.
-The below example shows how to use the middleware to guard the `GET / employees` route:
+Now we have the middleware, we can use it within any specific route or directly in `server.js`. In the example below we are using the route guard to protect all routes below where the middleware is used. This makes it simple allow non logged in users to access some routes and all others to be protected with a single guard:
 
 ```JS
-const express = require("express");
-const router = express.Router();
-const verifyJWT = require('../../middleware/verifyJWT');
+// Auth Guard >>>>>>>>>
+app.use(verifyJWT);
 
-const {
-  getAllEmployees,
-  postNewEmployee,
-  updateEmployee,
-  deleteEmployee,
-  getEmployee,
-} = require("../../controllers/employeesController");
-
-router
-  .route("/")
-  .get(verifyJWT ,getAllEmployees)
-  .post(postNewEmployee)
-  .put(updateEmployee)
-  .delete(deleteEmployee);
-
-router.route("/:id").get(getEmployee);
-
-module.exports = router;
+// All auth guarded api routes
+app.use("/employees", require("./routes/api/employees"));
 ```
 
 As well as guarding specific routes as above we can also guard a group of routes from within the `server.js` file.
@@ -167,7 +142,9 @@ app.use(verifyJWT);
 app.use("/employees", require("./routes/api/employees"));
 ```
 
-## Add cookie-parser middleware and handle getting access tokens using the refresh token
+# Refresh Tokens
+
+#### Add cookie-parser middleware and handle getting access tokens using the refresh token
 
 ```js
 const cookieParser = require("cookie-parser");
@@ -200,30 +177,29 @@ app.use(cookieParser());
 Once the middleware is in place we can create the `refreshTokenController`:
 
 ```js
-const usersDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
+const User = require("../model/User");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
-const handleRefreshToken = (req, res) => {
+const handleRefreshToken = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(401);
   const refreshToken = cookies.jwt;
 
-  const foundUser = usersDB.users.find(
-    (person) => person.refreshToken === refreshToken
-  );
+  const foundUser = await User.findOne({ refreshToken }).exec();
   if (!foundUser) return res.sendStatus(403); //Forbidden
   // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err || foundUser.username !== decoded.username)
       return res.sendStatus(403);
+    // create roles object
+    const roles = Object.values(foundUser.roles);
     const accessToken = jwt.sign(
-      { username: decoded.username },
+      {
+        UserInfo: {
+          username: decoded.username,
+          roles: roles,
+        },
+      },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "30s" }
     );
@@ -271,14 +247,7 @@ app.use("/employees", require("./routes/api/employees"));
 First lets create the controller:
 
 ```js
-const usersDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-const fsPromises = require("fs").promises;
-const path = require("path");
+const User = require("../model/User");
 
 const handleLogout = async (req, res) => {
   // On client also delete the access token
@@ -286,9 +255,7 @@ const handleLogout = async (req, res) => {
   if (!cookies?.jwt) return res.sendStatus(204); // No content to send back
   const refreshToken = cookies.jwt;
   // Is refresh token in DB
-  const foundUser = usersDB.users.find(
-    (person) => person.refreshToken === refreshToken
-  );
+  const foundUser = await User.findOne({ refreshToken }).exec();
   if (!foundUser) {
     // At this point we have a cookie but no user so we just clear the cookie
     res.clearCookie("jwt", {
@@ -298,18 +265,10 @@ const handleLogout = async (req, res) => {
     });
     return res.sendStatus(204);
   }
-  // At this point we have a user that has a matching refresh token that needs to be logged out
-  const otherUsers = usersDB.users.filter(
-    (person) => person.refreshToken !== foundUser.refreshToken
-  );
-  // remove cookie from user
-  const currentUser = { ...foundUser, refreshToken: "" };
-  // Add user back and update the db
-  usersDB.setUsers([...otherUsers, currentUser]);
-  await fsPromises.writeFile(
-    path.join(__dirname, "..", "model", "users.json"),
-    JSON.stringify(usersDB.users)
-  );
+  // Delete refresh token from user and update in the db
+  foundUser.refreshToken = "";
+  const result = await foundUser.save();
+  console.log("Logged out user: ", result);
   // Clear the cookie
   res.clearCookie("jwt", {
     sameSite: "None",
@@ -335,52 +294,9 @@ router.get("/", handleLogout);
 module.exports = router;
 ```
 
-Then add the rout to `server.js`:
+Then add the route to `server.js`:
 
 ```js
-const express = require("express");
-const cors = require("cors");
-const app = express();
-const path = require("path");
-const errorHandler = require("./middleware/errorHandler");
-const corsOptions = require("./config/corsOptions");
-const { logger } = require("./middleware/logEvents");
-const verifyJWT = require("./middleware/verifyJWT");
-const cookieParser = require("cookie-parser");
-const credentials = require("./middleware/credentials");
-
-const PORT = process.env.PORT || 3500;
-
-// Middleware >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Custom middleware for logging
-app.use(logger);
-
-// Handle options credentials check before cors and fetch cookies credentials requirement
-app.use(credentials);
-
-// Third party middleware - CORS - cross origin resource sharing
-// Remove dev origin domains from whitelist before shipping
-app.use(cors(corsOptions));
-
-// Built-in middleware to handle urlencoded data (form data)
-// content-type: application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: false }));
-
-// built-in middleware for json
-app.use(express.json());
-
-// middleware for cookies
-app.use(cookieParser());
-
-// serve static files ex: /public/css/styles.css (automatically serves all files within public)
-app.use("/", express.static(path.join(__dirname, "/public"))); // Any page top level
-
-// Routing >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Top level routes to serve static files (index & 404)
-app.use("/", require("./routes/root"));
-
 // Routing for headless backend >>>>>>>>>>>>>>>>>>
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));
@@ -394,17 +310,6 @@ app.use(verifyJWT);
 
 // All auth guarded api routes
 app.use("/employees", require("./routes/api/employees"));
-
-// Catch all methods and routes
-app.all("*", (req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
-});
-
-// Server Error handling
-app.use(errorHandler);
-
-// Initialise server
-app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 ```
 
 ## Note when using fetch on the front-end
