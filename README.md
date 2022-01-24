@@ -1,8 +1,5 @@
 # Node-Toolbox
 
-- [File System & Promises](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/basics.md)
-- [NPM Modules](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/npm-modules.md)
-- [Event Emitter](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/event-emitter.md)
 - [Server](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/server.md)
 - [Middleware](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/middleware.md#Route-Middleware)
 - [MVC](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/mvc.md)
@@ -10,6 +7,9 @@
 - [User Roles and Authorization](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/user-roles.md)
 - [Mongo & Mongoose]()
 - [CRUD]()
+- [File System & Promises](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/basics.md)
+- [NPM Modules](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/npm-modules.md)
+- [Event Emitter](https://github.com/Adamskoullos/node-toolbox/blob/main/guide/event-emitter.md)
 
 ---
 
