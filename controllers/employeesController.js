@@ -26,15 +26,15 @@ const postNewEmployee = async (req, res) => {
 };
 
 const updateEmployee = async (req, res) => {
-  if (!req?.params?.id)
+  if (!req?.body?.id)
     return res.status(400).json({ message: "ID parameter is required" });
   // Find and grab employee
-  const employee = await Employee.findOne({ _id: req.params.id }).exec();
+  const employee = await Employee.findOne({ _id: req.body.id }).exec();
   // If not found let user know
   if (!employee) {
     return res
       .status(204) // does not exist
-      .json({ message: `Employee ID ${req.params.id} not found` });
+      .json({ message: `Employee ID ${req.body.id} not found` });
   }
   // Update relevant fields
   if (req.body?.firstname) employee.firstname = req.body.firstname;
@@ -46,15 +46,15 @@ const updateEmployee = async (req, res) => {
 };
 
 const deleteEmployee = async (req, res) => {
-  if (!req?.params?.id)
+  if (!req?.body?.id)
     return res.status(400).json({ message: "ID parameter is required" });
-  const employee = await Employee.findOne({ _id: req.params.id }).exec();
+  const employee = await Employee.findOne({ _id: req.body.id }).exec();
   if (!employee) {
     return res
       .status(204) // does not exist
-      .json({ message: `Employee ID ${req.params.id} not found` });
+      .json({ message: `Employee ID ${req.body.id} not found` });
   }
-  const result = await employee.deleteOne({ _id: req.params.id });
+  const result = await employee.deleteOne({ _id: req.body.id });
   res.json(result);
 };
 

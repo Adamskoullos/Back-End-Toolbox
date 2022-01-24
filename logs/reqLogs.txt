@@ -342,3 +342,17 @@
 20220123	08:27:15	d3c520c3-a060-4a6c-a477-02f3ec7e061c	GET	undefined	/refresh
 20220123	08:30:12	5074cadb-634c-45f3-b638-947bed5966d1	GET	undefined	/refresh
 20220123	08:30:27	c1c5a3dd-3364-423d-ae42-030a3125aa6c	GET	undefined	/logout
+20220124	06:02:42	8e979db6-b69f-4d32-ac6a-b124a9f6563f	POST	undefined	/auth
+20220124	06:03:52	3c5a3c12-20cc-4e6b-8787-2c17b15dcadc	GET	undefined	/employees
+20220124	06:08:11	5cf4bd41-5aa2-4011-97c0-94e50f21156e	GET	undefined	/refresh
+20220124	06:08:53	e8dbc488-7987-4770-b240-e4af81e3ab6c	GET	undefined	/logout
+20220124	06:09:10	1c22eb96-f41c-4a0b-b61f-6da1d2c546ce	POST	undefined	/auth
+20220124	06:09:41	1f4d8beb-11a2-4545-a07d-268b10914a72	POST	undefined	/employees
+20220124	06:09:58	9971f09d-6b70-4fb2-ae55-24a78d2bda25	POST	undefined	/employees
+20220124	06:10:17	9d6ba1f9-dab4-4e52-832a-e07bac37b46e	GET	undefined	/refresh
+20220124	06:10:34	2922cf37-bfd1-4cb3-ac01-216276191dfb	GET	undefined	/employees
+20220124	06:11:31	aff8d35d-8c6b-4b1d-9f6b-b0b81a922b92	GET	undefined	/refresh
+20220124	06:12:07	2c7e98b5-bbd3-4f1f-bd6a-e2f29ecdd2ad	GET	undefined	/employees/61ee42a56db0bde6d55dfeb4
+20220124	06:12:10	30f50348-b2c6-4fc2-9316-cb9e75c6338b	GET	undefined	/employees/61ee42a56db0bde6d55dfeb4
+20220124	06:15:09	dd521967-2a3f-4e02-8f68-48b79d3cf32c	GET	undefined	/refresh
+20220124	06:15:35	6bdaef18-0b03-4e18-b1e3-62de86d10ab3	GET	undefined	/employees/61ee42a56db0bde6d55dfeb4
