@@ -6,8 +6,8 @@
 - [Server](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/server.md)
 - [Middleware](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/middleware.md#Route-Middleware)
 - [MVC](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/mvc.md)
-- [Authentication]()
-- [User Roles]()
+- [Authentication](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/jwt.md#Auth-Set-Up)
+- [User Roles and Authorization](https://github.com/Adamskoullos/Node-Toolbox/blob/main/0guide/user-roles.md)
 - [Mongo & Mongoose]()
 - [CRUD]()
 

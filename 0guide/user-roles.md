@@ -12,7 +12,7 @@ const ROLES_LIST = {
 module.exports = ROLES_LIST;
 ```
 
-Here is `/model/users.js`, whoing how to structure the roles within the user object:
+Here is an example of the `users` collection:
 
 ```js
 [
@@ -40,123 +40,9 @@ Here is `/model/users.js`, whoing how to structure the roles within the user obj
 ];
 ```
 
-Amend the `registerController.js` to include roles as a new user is created:
+Once a user is logged in we can control which users have access to which routes by using different role access.
 
-```js
-// Store new user
-const newUser = {
-  username: user,
-  roles: { user: 2001 },
-  password: hashedPwd,
-};
-```
-
-Then include the authorisation roles within the login workflow `authController.js`:
-
-1. Create an object `roles` of the role values for the user
-2. Add a `UserInfo` object to the `accessToken` which includes the `username` and `roles`
-
-```js
-// See if user exists
-const foundUser = userDB.users.find((person) => person.username === user);
-if (!foundUser) return res.sendStatus(401); // Unauthorised
-// Check password
-const match = await bcrypt.compare(pwd, foundUser.password);
-if (!match) return res.sendStatus(401);
-// Grab the roles for the foundUser
-const roles = Object.values(foundUser.roles);
-// Create JWTs >>>>>>>>>>>>>>>>>>>>>>>>>
-// Access token
-const accessToken = jwt.sign(
-  {
-    UserInfo: {
-      username: foundUser.username,
-      roles: roles,
-    },
-  },
-  process.env.ACCESS_TOKEN_SECRET,
-  { expiresIn: "100s" }
-);
-// Refresh token
-const refreshToken = jwt.sign(
-  { username: foundUser.username },
-  process.env.REFRESH_TOKEN_SECRET,
-  { expiresIn: "1d" }
-);
-```
-
-Then alter the `refreshTokenController.js` to also include roles within the `accessToken`:
-
-```js
-const usersDB = {
-  users: require("../model/users.json"),
-  setUsers: function (data) {
-    this.users = data;
-  },
-};
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-
-const handleRefreshToken = (req, res) => {
-  const cookies = req.cookies;
-  if (!cookies?.jwt) return res.sendStatus(401);
-  const refreshToken = cookies.jwt;
-
-  const foundUser = usersDB.users.find(
-    (person) => person.refreshToken === refreshToken
-  );
-  if (!foundUser) return res.sendStatus(403); //Forbidden
-  // evaluate jwt
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || foundUser.username !== decoded.username)
-      return res.sendStatus(403);
-    // create roles object
-    const roles = Object.values(foundUser.roles);
-    const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          username: decoded.username,
-          roles: roles,
-        },
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "30s" }
-    );
-    console.log("Access token: ", accessToken);
-    res.json({ accessToken });
-  });
-};
-
-module.exports = { handleRefreshToken };
-```
-
-Then handle middleware to verify the roles:
-
-1. Update `/middleware/verifyJWT.js`:
-
-The `accessToken` now has a `UserInfo` object which contains both the username and the user roles. So we need to grab and assign then to the `req` from the `decodedUser`.
-
-```js
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-
-const verifyJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-  // if there is no auth header or if the auth header does not start with Bearer just return
-  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401); // Unauthorised
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decodedUser) => {
-    if (err) return res.sendStatus(403); // Invalid token
-    req.user = decodedUser.UserInfo.username;
-    req.roles = decodedUser.UserInfo.roles;
-    next();
-  });
-};
-
-module.exports = verifyJWT;
-```
-
-2. Create verify roles middleware `/middleware/verifyRoles.js`:
+Create `/middleware/verifyRoles.js`:
 
 ```js
 const verifyRoles = (...allowedRoles) => {
@@ -177,13 +63,7 @@ const verifyRoles = (...allowedRoles) => {
 module.exports = verifyRoles;
 ```
 
-3. Implement the middleware to verify routes. The example below uses the middleware to guard specific routes within the employees api:
-
-The below example is structured to do the following:
-
-- `GET` > Not restricted to any roles, but the whole employees route protected the credentials middleware so only logged in uses can get employees list
-- `POST` and `PUT` > `Admin` and `Editor` roles can add and update employees
-- `DELETE` > `Admin` role only can delete employees
+Then use the middleware within specific routes to manage role access. In the below example we are pulling in the `roles` object and the `verifyRoles` middleware, the we are then adding the `verifyRoles()` function into the routes as the first argument passing in any roles we want to allow access to. We are access each role via dot notation:
 
 `/routes/api/employees.js`:
 
