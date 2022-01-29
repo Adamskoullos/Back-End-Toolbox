@@ -17,6 +17,9 @@
     "url": "https://github.com/Adamskoullos/node-toolbox/issues"
   },
   "homepage": "https://github.com/Adamskoullos/node-toolbox#readme",
+  "engines": {
+    "node": "14.15.5"
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
